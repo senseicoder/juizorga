@@ -1,9 +1,13 @@
-<?php
+<form action="?" method="post"><?php
 
 require __DIR__ . '/conf.inc.php';
 require __DIR__ . '/libs/listeFichiers.inc.php';
 
 $aFiles = json_decode(file_get_contents(PATH_DATA . 'fichiers.json'), TRUE);
+
+if(isset($_POST['actions'])) {
+	var_dump($_POST['actions']);
+}
 
 echo "<h1>A déplacer</h1><table border=1>";
 foreach($aFiles as $sFilePath => $aFileData) if(isset($aFileData['destination'])) {
@@ -41,3 +45,4 @@ function Champ(array $a, $chp)
 }
 
 #echo "<h1>Debug</h1>"; var_dump($aFiles);
+?></form>
