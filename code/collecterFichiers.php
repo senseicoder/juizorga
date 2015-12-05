@@ -1,9 +1,6 @@
 <?php
 
 require __DIR__ . '/conf.inc.php';
-require __DIR__ . '/libs/listeFichiers.inc.php';
-
-$oList = new CListeFichiers();
 
 class MyRecursiveFilterIterator extends \RecursiveFilterIterator 
 {
@@ -17,16 +14,20 @@ class MyRecursiveFilterIterator extends \RecursiveFilterIterator
 	}
 }
 
-foreach($aPathAnalyse as $sPath) {
-	echo "<h1>analyse de $sPath</h1>";
-	$oDirectory = new RecursiveDirectoryIterator($sPath);
-	$oFilter = new MyRecursiveFilterIterator($oDirectory);
-	$oIterator = new RecursiveIteratorIterator($oFilter);
-	$ct = 0;
-	foreach($oIterator as $oFile) {
-		$ct += $oList->Add($oFile);
-	}
+$aList = array();
+$oDirectory = new RecursiveDirectoryIterator($sPathAnalyse);
+$oFilter = new MyRecursiveFilterIterator($oDirectory);
+$oIterator = new RecursiveIteratorIterator($oFilter);
+$finfo = finfo_open(FILEINFO_MIME_TYPE);
+foreach($oIterator as $oFile) {
+	$aList[(string)$oFile] = array(
+		'filepath' => (string)$oFile, 
+		'mimetype' => finfo_file($finfo, $oFile->getRealPath()),
+		'size' => $oFile->getSize(),
+		'basename' => $oFile->getBasename(), 
+		'extension' => $oFile->getExtension(), 
+		'mtime' => $oFile->getMTime(),
+	);
 }
-
-echo "import: $ct<br>";
-$oList->SaveData();
+finfo_close($finfo);
+file_put_contents(PATH_DATA . 'fichiers.json', json_encode($aList));
