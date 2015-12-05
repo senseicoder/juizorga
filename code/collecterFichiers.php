@@ -15,19 +15,22 @@ class MyRecursiveFilterIterator extends \RecursiveFilterIterator
 }
 
 $aList = array();
-$oDirectory = new RecursiveDirectoryIterator($sPathAnalyse);
-$oFilter = new MyRecursiveFilterIterator($oDirectory);
-$oIterator = new RecursiveIteratorIterator($oFilter);
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
-foreach($oIterator as $oFile) {
-	$aList[(string)$oFile] = array(
-		'filepath' => (string)$oFile, 
-		'mimetype' => finfo_file($finfo, $oFile->getRealPath()),
-		'size' => $oFile->getSize(),
-		'basename' => $oFile->getBasename(), 
-		'extension' => $oFile->getExtension(), 
-		'mtime' => $oFile->getMTime(),
-	);
+foreach($aPathAnalyse as $sPathAnalyse) {
+	$oDirectory = new RecursiveDirectoryIterator($sPathAnalyse);
+	$oFilter = new MyRecursiveFilterIterator($oDirectory);
+	$oIterator = new RecursiveIteratorIterator($oFilter);
+	foreach($oIterator as $oFile) {
+		$aList[(string)$oFile] = array(
+			'filepath' => (string)$oFile, 
+			'mimetype' => finfo_file($finfo, $oFile->getRealPath()),
+			'realpath' => $oFile->getRealPath(), 
+			'size' => $oFile->getSize(),
+			'basename' => $oFile->getBasename(), 
+			'extension' => $oFile->getExtension(), 
+			'mtime' => $oFile->getMTime(),
+		);
+	}
 }
 finfo_close($finfo);
 file_put_contents(PATH_DATA . 'fichiers.json', json_encode($aList));

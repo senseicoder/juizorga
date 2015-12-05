@@ -23,11 +23,12 @@ function CalculDestination(array $aOeuvres, array $aFileData)
 	if( ! isset($aFileData['oeuvre'])) return '';
 	else {
 		$aOeuvre = $aOeuvres[$aFileData['oeuvre']];
-		return sprintf('%s/%s/%s/', PATH_DESTINATION_BASE, PourQui($aOeuvre), $aFileData['oeuvre']);
+		$sPath = str_replace('//', '/', sprintf('%s/%s/%s/', PATH_DESTINATION_BASE, PourQui($aOeuvre), $aFileData['oeuvre']));
+		return $sPath;
 	}
 }
 
 foreach($aFiles as $sFilePath => &$aFileData) {
 	$sDestination = CalculDestination($aOeuvres, $aFileData);
-	$aFileData['destination'] = $sDestination;
+	if($aFileData['realpath'] != $sDestination) $aFileData['destination'] = $sDestination;
 }

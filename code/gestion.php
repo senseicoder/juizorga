@@ -10,10 +10,10 @@ if(isset($_POST['actions'])) {
 }
 
 echo "<h1>A déplacer</h1><table border=1>";
-foreach($aFiles as $sFilePath => $aFileData) if(isset($aFileData['destination'])) {
+foreach($aFiles as $sFilePath => $aFileData) if(! empty($aFileData['destination'])) {
 	printf('<tr><td><input type="checkbox" name="actions[%s]"/></td><td>%s</td><td>%s</td><td>%s</td></tr>',
 		$sFilePath,
-		$aFileData['basename'],
+		$aFileData['realpath'],
 		Oeuvres($aFileData),
 		Champ($aFileData, 'destination')
 		);
@@ -22,11 +22,10 @@ echo '</table><input type="submit" name="cmd" value="valider"/>';
 
 echo "<h1>A classer</h1><table border=1>";
 foreach($aFiles as $sFilePath => $aFileData) if( ! isset($aFileData['oeuvre'])) {
-	printf('<tr><td><input type="checkbox" name="actions[%s]"/></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
-		$sFilePath,
+	printf('<tr><td><a href="classer.php?file=%s">classer</a></td><td>%s</td><td>%s</td></tr>',
+		urlencode($sFilePath),
 		$aFileData['basename'],
-		Oeuvres($aFileData),
-		''
+		Oeuvres($aFileData)
 		);
 }
 echo '</table><input type="submit" name="cmd" value="valider"/>';
